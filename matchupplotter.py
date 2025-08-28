@@ -53,8 +53,10 @@ class MatchupPlotter:
     def plot_matchup(self):
         df_pitcher, df_batter = self.get_data()
         df_pitcher, df_batter = self.filter_data(df_pitcher, df_batter)
+
+        # print(df_pitcher.columns[50:])
     
-        df_batter[self.batter_color_column] = df_batter[self.batter_color_column].clip(0.1, 0.6)
+        # df_batter[self.batter_color_column] = df_batter[self.batter_color_column].clip(0.1, 0.6)
         if df_pitcher.empty or df_batter.empty:
             print("No data available for the specified matchup.")
             return
@@ -65,12 +67,12 @@ class MatchupPlotter:
             print(f"No data available for {self.pitch_type} pitches.")
             return
         
-        print(df_batter[self.batter_color_column].describe())
-        print(df_pitcher_filtered[self.batter_color_column].describe())
+        num_pitches = len(df_batter)
+        
     
         # Create a figure with three subplots side by side
         fig, axes = plt.subplots(1, 3, figsize=(18, 8), constrained_layout=True)
-        norm = Normalize(vmin=0, vmax=0.5)
+        norm = Normalize(vmin=0, vmax=0.7)
     
         # --- Plot 1: xwOBA-Weighted KDE Heatmap for Batter ---
         ax1 = axes[0]
@@ -97,11 +99,13 @@ class MatchupPlotter:
         ax1.axvline(0.83, color='black', linestyle='--', linewidth=1)
     
         # Labels and title
-        ax1.set_title(f"xwOBA-Weighted KDE Heatmap for {self.batter_first} {self.batter_last} vs {self.pitcher_hand}HP {self.pitch_type}")
+        ax1.set_title(f"xwOBA-Weighted KDE Heatmap for {self.batter_first} {self.batter_last} vs {self.pitcher_hand}HP {self.pitch_type} ({num_pitches} pitches)")
         ax1.set_xlabel("Plate X (horizontal)")
         ax1.set_ylabel("Plate Z (vertical)")
         ax1.set_xlim(-2, 2)
         ax1.set_ylim(0, 5)
+
+        pitcher_num_pitches = len(df_pitcher_filtered)
     
         # --- Plot 2: Pitch Density Heatmap ---
         ax2 = axes[1]
@@ -166,7 +170,7 @@ class MatchupPlotter:
         ax3.axvline(0.83, color='black', linestyle='--', linewidth=1)
     
         # Labels and title
-        ax3.set_title(f"xwOBA-Weighted KDE Heatmap for {self.pitcher_first} {self.pitcher_last} ({self.pitch_type}) vs {self.batter_hand}HB")
+        ax3.set_title(f"xwOBA-Weighted KDE Heatmap for {self.pitcher_first} {self.pitcher_last} ({self.pitch_type}) vs {self.batter_hand}HB ({pitcher_num_pitches} pitches)")
         ax3.set_xlabel("Plate X (horizontal)")
         ax3.set_ylabel("Plate Z (vertical)")
         ax3.set_xlim(-2, 2)
